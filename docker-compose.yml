@@ -1,39 +1,40 @@
 services:
   web:
     image: gym:v1.0.0
-    build:
-      context: .
-      dockerfile: Dockerfile
-      ssh: ["default"]
+#    build:
+#      context: .
+#      dockerfile: Dockerfile
+#      ssh: ["default"]
+    build: .
     container_name: gym
     restart: always
     ports:
       - "8000:8000"
-    env_file:
-      - .env
-    depends_on:
-      db:
-        condition: service_healthy
-  db:
-    image: pgvector/pgvector:pg17
-    container_name: postgres-llm
-    ports:
-      - "0.0.0.0:5432:5432"
-    env_file:
-      - .env
     environment:
-      POSTGRES_USER: "${DB_USER:-pgadmin}"
-      POSTGRES_PASSWORD: "${DB_PASSWORD:-passw0rd}"
-      POSTGRES_DB: "${DB_DATABASE:-postgres}"
-    volumes:
-      - postgres-llm-data:/var/lib/postgresql/data
-      - ./01-init-extensions.sql:/docker-entrypoint-initdb.d/01-init-extensions.sql:ro
-      - ./backup.sql.gz:/docker-entrypoint-initdb.d/backup.sql.gz:ro
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $$DB_USER -d $$DB_DATABASE"]
-      interval: 5s
-      timeout: 5s
-      retries: 5
+      - DB_HOST: ${DB_HOST} 
+      - DB_USER: ${DB_DATABASE}
+      - DB_PASSWORD: ${DB_DATABASE}
+      - DB_DATABASE: ${DB_DATABASE}
+#  db:
+#    image: pgvector/pgvector:pg17
+#    container_name: postgres-llm
+#    ports:
+#      - "0.0.0.0:5432:5432"
+#    env_file:
+#      - .env
+#    environment:
+#      POSTGRES_USER: "${DB_USER:-pgadmin}"
+#      POSTGRES_PASSWORD: "${DB_PASSWORD:-passw0rd}"
+#      POSTGRES_DB: "${DB_DATABASE:-postgres}"
+#    volumes:
+#      - postgres-llm-data:/var/lib/postgresql/data
+#      - ./01-init-extensions.sql:/docker-entrypoint-initdb.d/01-init-extensions.sql:ro
+#      - ./backup.sql.gz:/docker-entrypoint-initdb.d/backup.sql.gz:ro
+#    healthcheck:
+#      test: ["CMD-SHELL", "pg_isready -U $$DB_USER -d $$DB_DATABASE"]
+#      interval: 5s
+#      timeout: 5s
+#      retries: 5
 
-volumes:
-  postgres-llm-data:
+#volumes:
+#  postgres-llm-data:
