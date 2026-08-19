@@ -1,8 +1,12 @@
 FROM python:3.11-slim
 
+WORKDIR /code
+
 RUN apt-get update && apt-get install -y git openssh-client && rm -rf /var/lib/apt/lists/*
 
-RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
+COPY requirements.txt .
+
+#RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 
 #ARG REPO_URL="git@github.com:gnietof/gym-project.git"
 
@@ -10,8 +14,6 @@ RUN mkdir -p -m 0700 ~/.ssh && ssh-keyscan github.com >> ~/.ssh/known_hosts
 #RUN --mount=type=ssh git clone $REPO_URL .
 
 RUN pip install --no-cache-dir -r requirements.txt
-
-WORKDIR /code
 
 ENV PYTHONPATH=/code/src
 
